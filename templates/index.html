@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        let selectedFile = null;  // 存储用户选择的文件
+        async function sendMessage() {
+            const userMessage = document.getElementById("userMessage").value;
+            const uploadIcon = document.getElementById("uploading-icon");
+            const completeIcon = document.getElementById("upload-complete-icon");
+    
+            // 如果既没有文本也没有图片，不进行发送
+            if (!userMessage.trim() && !selectedFile) return;
+    
+            // 如果有文字消息，添加用户消息到聊天框
+            if (userMessage.trim()) {
+                addMessageToChat('user', userMessage);
+                document.getElementById("userMessage").value = "";  // 清空文本框
+            }
+    
+            // 创建FormData对象来处理文件和文本
+            const formData = new FormData();
+            if (selectedFile) {
+                formData.append('file', selectedFile);  // 将文件添加到FormData中
+            }
+            formData.append('message', userMessage);  // 将文本添加到FormData中
+    
+            // 显示上传中的图标
+            uploadIcon.style.display = 'inline-block';
+            completeIcon.style.display = 'none';
+    
+            try {
+                let response;
+                if (selectedFile) {
+                    // 如果有文件，上传文件和文本
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        addImageToChat('user', event.target.result);  // 显示上传的图片
+                    };
+                    reader.readAsDataURL(selectedFile);
+    
+                    response = await fetch("/upload", {
+                        method: "POST",
+                        body: formData
+                    });
+                } else {
+                    // 如果没有文件，仅上传文本
+                    response = await fetch("/chat", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ message: userMessage })
+                    });
+                }
+    
+                const data = await response.json();
+                addMessageToChat('bot', data.response);  // 显示模型的响应
+    
+                // 如果有文件上传，显示上传完成的图标
+                if (selectedFile) {
+                    uploadIcon.style.display = 'none';
+                    completeIcon.style.display = 'inline-block';
+                    selectedFile = null;  // 清空选中的文件
+                    document.getElementById("fileInput").value = "";  // 重置文件输入框
+                }
+    
+                // 在完成消息发送后，将图标恢复到初始状态
+                setTimeout(() => {
+                    completeIcon.style.display = 'none';
+                    uploadIcon.style.display = 'inline-block';
+                }, 1500);  // 延迟切换回初始状态
+            } catch (error) {
+                console.error("Error during upload:", error);
+            }
+        }
+    
+        function addMessageToChat(role, message) {
+            const chatContainer = document.getElementById("chat-container");
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `chat-message ${role}-message`;
+    
+            const bubble = document.createElement("div");
+            bubble.className = "message-bubble";
+            bubble.textContent = message;
+    
+            messageDiv.appendChild(bubble);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;  // 滚动到最底部
+        }
+    
+        function addImageToChat(role, imageUrl) {
+            const chatContainer = document.getElementById("chat-container");
+            const imageDiv = document.createElement("div");
+            imageDiv.className = `chat-message ${role}-message`;
+    
+            const img = document.createElement("img");
+            img.src = imageUrl;
+            img.alt = "Uploaded Image";
+            img.style.maxWidth = "100%";
+            img.style.borderRadius = "10px";
+            imageDiv.appendChild(img);
+    
+            chatContainer.appendChild(imageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;  // 滚动到最底部
+        }
+    
+        async function sendWelcomeMessage() {
+            const response = await fetch("/welcome", {
+                method: "GET",
+            });
+    
+            const data = await response.json();
+            addMessageToChat('bot', data.response);
+        }
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            sendWelcomeMessage();  // 页面加载时发送欢迎消息
+    
+            // 监听Enter键发送消息
+            const input = document.getElementById("userMessage");
+            input.addEventListener("keyup", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    document.getElementById("sendButton").click();
+                }
+            });
+    
+            // 文件选择时存储文件到变量
+            document.getElementById('fileInput').addEventListener('change', function(event) {
+                selectedFile = event.target.files[0];
+                // 显示上传中的图标
+                document.getElementById("uploading-icon").style.display = 'inline-block';
+                document.getElementById("upload-complete-icon").style.display = 'none';
+            });
+        });
+    </script>    
+<body>
+    <div id="chat-wrapper">
+        <div id="chat-title">WangSe-您身边的健康助手</div>
+        
+        <div id="chat-container">
+          <!-- Chat messages -->
+        </div>
+        
+        <div id="chat-container"></div>
+        <div id="input-container">
+            <!-- 隐藏的文件上传按钮 -->
+            <input type="file" id="fileInput" accept="image/*" style="display:none;">
+            
+            <!-- 上传内容图标 -->
+            <label for="fileInput" id="uploading-icon">
+                <i class="fas fa-upload" style="font-size:24px; color: #007bff; cursor: pointer;"></i>
+            </label>
+            
+            <!-- 上传完成图标 -->
+            <i id="upload-complete-icon" class="fas fa-check-circle" style="font-size:24px; color: #28a745; display:none;"></i>
+            
+            <!-- 消息输入框 -->
+            <input type="text" id="userMessage" placeholder="Type a message..." autocomplete="off">
+            
+            <!-- 发送按钮 -->
+            <button id="sendButton" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,230 @@
+/* 全局样式 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('pic01.jpg') no-repeat center center fixed; /* 背景图片 */
+    background-size: cover; /* 背景图片覆盖整个页面 */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* 标题在顶部 */
+    align-items: center;
+    height: 100vh;
+    position: relative; /* 使伪元素相对定位 */
+}
+
+/* 用于创建模糊背景的覆盖层 */
+body::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.6); /* 半透明的覆盖层 */
+    filter: blur(5px); /* 模糊效果 */
+    z-index: -1; /* 背景下层 */
+}
+
+/* 标题样式 */
+header {
+    background: linear-gradient(135deg, #004d99 0%, #0066cc 100%); /* 渐变背景 */
+    width: 100%;
+    padding: 20px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1; /* 标题在背景和覆盖层上方 */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5em;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 聊天标题样式 */
+#chat-title {
+    background: linear-gradient(135deg, #004d99 0%, #0066cc 100%); /* 渐变背景 */
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 2; /* 在聊天框和背景之上 */
+}
+
+/* 聊天界面的容器 */
+#chat-wrapper {
+    width: 100%;
+    max-width: 1200px; /* 聊天窗口宽度 */
+    height: calc(96vh - 50px); /* 高度调整 */
+    margin-top: 40px; /* 标题空间 */
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff; /* 纯色背景 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 10px; /* 圆角 */
+    overflow: hidden;
+    position: relative; /* 确保覆盖层不影响聊天框 */
+    z-index: 2; /* 聊天框在背景和覆盖层上方 */
+}
+
+/* 聊天头部样式 */
+#chat-header {
+    background-color: #005a9e; /* 纯色背景 */
+    padding: 15px;
+    color: #ffffff;
+    text-align: center;
+    border-bottom: 2px solid #003f6e; /* 更深色底部边框 */
+}
+
+#chat-header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* 聊天记录的显示区域 */
+#chat-container {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #f5f5f5; /* 纯色背景 */
+    scroll-behavior: smooth;
+}
+
+/* 消息气泡的基本样式 */
+.chat-message {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 10px;
+    max-width: 80%; /* 扩大气泡宽度 */
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 用户消息气泡样式，靠右对齐 */
+.user-message {
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+.user-message .message-bubble {
+    background-color: #0078d4; /* 纯色背景 */
+    color: #ffffff;
+    border-radius: 10px; /* 圆角 */
+}
+
+/* 机器人消息气泡样式，靠左对齐 */
+.bot-message {
+    justify-content: flex-start;
+    margin-right: auto;
+}
+
+.bot-message .message-bubble {
+    background-color: #e2e2e2; /* 纯色背景 */
+    color: #333333;
+    border-radius: 10px; /* 圆角 */
+}
+
+/* 消息气泡的内容样式 */
+.message-bubble {
+    padding: 12px 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.message-bubble:hover {
+    transform: scale(1.02);
+}
+
+/* 图片消息样式 */
+.chat-message img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 10px;
+    transition: transform 0.3s;
+}
+
+.chat-message img:hover {
+    transform: scale(1.05);
+}
+
+/* 输入框和按钮的容器 */
+#input-container {
+    display: flex;
+    padding: 15px;
+    background-color: #ffffff; /* 纯色背景 */
+    border-top: 1px solid #ddd;
+    align-items: center;
+}
+
+/* 文件上传按钮 */
+#fileInput {
+    display: none;
+}
+
+#uploading-icon, #upload-complete-icon {
+    margin-right: 10px;
+}
+
+/* 消息输入框样式 */
+#userMessage {
+    flex-grow: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-right: 10px;
+    box-sizing: border-box;
+    outline: none;
+    transition: box-shadow 0.2s, background-color 0.2s;
+}
+
+#userMessage:focus {
+    box-shadow: 0 0 5px rgba(0, 120, 212, 0.7);
+    border-color: #0078d4;
+    background-color: #f0f8ff;
+}
+
+/* 发送按钮样式 */
+#sendButton {
+    padding: 12px 20px;
+    font-size: 14px;
+    background-color: #0078d4; /* 纯色背景 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+#sendButton:active {
+    transform: scale(0.95);
+}
+
+#sendButton:hover {
+    background-color: #005a9e; /* 纯色背景 */
+}
