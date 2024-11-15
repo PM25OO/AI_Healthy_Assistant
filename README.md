@@ -1,3 +1,5 @@
+# 健康机器人助手WangSe
+### 此API有效期至2025-08-09 
 ## WangSe机器人使用介绍
 - 需要安装`flask`,`dwspark`,`sparkai`等sdk
 - 使用前需要在`./config.py`中进行配置,如`APPID`,`APIKey`,和`APISecret`以及初始化需要的提示词`prompt`
@@ -5,8 +7,7 @@
 - 运行app.py后进入`127.0.0.1:5000`即可进行聊天
 
 ## 待完成
-- 图片自动重复解析
-- 上传图标bug未修复
+- 暂无
 
 ## 更新日志:
 - Alpha1.0:
