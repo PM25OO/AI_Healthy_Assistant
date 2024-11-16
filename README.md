@@ -1,5 +1,5 @@
 # 👨‍⚕️健康机器人助手WangSe
-### 此API有效期至2025-08-09 
+- 此API有效期至2025-08-09 
 ## WangSe机器人使用介绍
 - 需要安装`flask`,`dwspark`,`sparkai`等sdk
 - 使用前需要在`./config.py`中进行配置,如`APPID`,`APIKey`,和`APISecret`以及初始化需要的提示词`prompt`
